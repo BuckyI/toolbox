@@ -10,9 +10,9 @@ info = input("""
         """)
 
 if info:
-    os.system("python xlsx.py")
+    os.system("python ../xlsx/xlsx.py")
 else:
-    os.system("python clipboard.py")
+    os.system("python ../master_clipboard/clipboard.py")
 
 # 执行结束，暂停
 print("程序执行结束")
