@@ -17,7 +17,6 @@ elif info == "1":
 elif info == "3":
     # 切换工作目录
     os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..", "maogai")))
-    os.system("dir")
     os.system("python exe.py")
 
 # 执行结束，暂停
