@@ -18,7 +18,13 @@ elif info == "1":
 elif info == "3":
     # 切换工作目录，因为这个脚本里面也用到了工作目录
     os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..", "maogai")))
-    os.system("python maogai.py")
+    flag = 1
+    while flag:
+        os.system("python maogai.py")
+        flag = input("要不要继续")
+    else:
+        print("结束收集试题")
+
 elif info == "4":
     os.system("python ../markdown_process/mp.py")
 
