@@ -1,6 +1,7 @@
 import time
 import pyperclip
 
+
 def str_time():
     """获取时间字符串，从列表中选择"""
     str_time_ls = []
