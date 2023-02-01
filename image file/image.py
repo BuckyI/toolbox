@@ -4,6 +4,7 @@ import imghdr
 import logging
 import time
 import re
+import uuid
 
 
 class Image():
@@ -44,7 +45,11 @@ class Image():
         "图片名：时间信息 + 标签 + 必要的序号"
         return self.timestr + " " + " ".join(self.tags)
 
-    
+    def set_tags(self, tags: list, *, reset=False):
+        if reset:
+            self.tags = tags
+        else:
+            self.tags.extend(tags)
 
 
 if __name__ == "__main__":
@@ -58,4 +63,17 @@ if __name__ == "__main__":
               if f.is_file() and imghdr.what(f.path))
 
     for img in images:
-        logging.info(img.generate_name())
+        tags = input(f"input tags of {img.file.name}: ")
+        img.set_tags(tags.split())
+        # rename
+        scr = img.path
+        dst = scr.with_stem(img.ideal_name)
+        if not dst.exists():
+            scr.rename(dst)
+        else:
+            dst = scr.with_stem(f"{img.ideal_name} {uuid.uuid4()}")
+            scr.rename(dst)
+            logging.critical(
+                f"Filename conflict! {dst.name} has alreadly existed! try uuid"
+            )
+        logging.info(f"rename from {scr.name} to {dst.name}")
