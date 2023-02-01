@@ -55,6 +55,12 @@ class Image():
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s: %(message)s')
+    handler = logging.FileHandler("images_change.log")
+    handler.setLevel(logging.INFO)
+    handler.addFilter(lambda s: "[RENAME]" in s.msg)  # msg 含 RENAME 时，保存到文件
+    handler.setFormatter(logging.Formatter('%(asctime)s : %(message)s'))
+    rootLogger = logging.getLogger()
+    rootLogger.addHandler(handler)  # add handler to root logger
 
     source = r"image file/test/"
     # 转换成绝对路径，避免混淆（？）后续 f.path 也会变成绝对路径
@@ -65,17 +71,17 @@ if __name__ == "__main__":
               if f.is_file() and imghdr.what(f.path))
 
     for img in images:
-        tags = input(f"input tags of {img.file.name}: ")
-        img.set_tags(tags.split())
+        # tags = input(f"input tags of {img.file.name}: ")
+        img.set_tags("tag1 tag2".split(), reset=True)
         # rename
         scr = img.path
         dst = scr.with_stem(img.ideal_name)
-        if not dst.exists():
-            scr.rename(dst)
+        if scr == dst:
+            logging.info(f"[RENAME] \"{scr.name}\" unchanged")
         else:
-            dst = scr.with_stem(f"{img.ideal_name} {uuid.uuid4()}")
+            if dst.exists():
+                dst = scr.with_stem(f"{img.ideal_name} {uuid.uuid4()}")
+                logging.warning(
+                    f"\"{dst.name}\" has alreadly existed! try uuid")
             scr.rename(dst)
-            logging.critical(
-                f"Filename conflict! {dst.name} has alreadly existed! try uuid"
-            )
-        logging.info(f"rename from {scr.name} to {dst.name}")
+            logging.info(f"[RENAME] from \"{scr.name}\" to \"{dst.name}\"")
