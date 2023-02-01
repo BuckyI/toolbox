@@ -38,7 +38,7 @@ class Image():
             self.tags.pop()
         # 标签可能以 `#`开头，去掉这个不必要的标识
         self.tags = [re.match(r"#?(.*)", s).group(1) for s in self.tags]
-        logging.debug("analyze_filename: %s", self.tags)
+        logging.debug("from filename get tags: %s", self.tags)
 
     @property
     def ideal_name(self):
@@ -53,7 +53,9 @@ class Image():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s - %(levelname)s: %(message)s')
+
     source = r"image file/test/"
     # 转换成绝对路径，避免混淆（？）后续 f.path 也会变成绝对路径
     source = os.path.realpath(source)
