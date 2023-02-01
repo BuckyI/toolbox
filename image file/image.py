@@ -39,13 +39,12 @@ class Image():
         self.tags = [re.match(r"#?(.*)", s).group(1) for s in self.tags]
         logging.debug("analyze_filename: %s", self.tags)
 
-    def generate_name(self):
-        infos = [self.timestr]
-        infos.extend(self.tags)
+    @property
+    def ideal_name(self):
+        "图片名：时间信息 + 标签 + 必要的序号"
+        return self.timestr + " " + " ".join(self.tags)
 
-        infostr = " ".join(infos)
-        ext = os.path.splitext(self.file.path)[1].lower()
-        return infostr + ext
+    
 
 
 if __name__ == "__main__":
