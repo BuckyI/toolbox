@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import imghdr
 import logging
 import time
@@ -8,23 +9,22 @@ import re
 class Image():
     def __init__(self, file: os.DirEntry):
         self.file = file
+        self.path = Path(file.path)
         self.tags = []
-        self.get_time()
+        self.get_timestr()
         self.analyze_filename()
 
-    def get_time(self):
+    def get_timestr(self):
         "获得文件最早创建时间 timestr 作为文件名的一部分"
-        path = self.file.path
-        modify_time = os.path.getmtime(path)
-        create_time = os.path.getctime(path)
-        self.time = create_time if modify_time > create_time else modify_time
+        mtime = self.file.stat().st_mtime
+        ctime = self.file.stat().st_ctime
+        self.time = ctime if mtime > ctime else mtime
         self.timestr = time.strftime('%Y%m%d', time.localtime(self.time))
         return self.timestr
 
     def analyze_filename(self):
         "从文件名中提取信息"
-        name = os.path.splitext(self.file.name)[0]
-        tags = name.split()
+        tags = self.path.stem.split()
         # 以 20 开头的 8 位数字，认为是该文件已经标注好的日期信息
         if m := re.match(r"20\d{6}", tags[0]):
             # 已标注的优先级较高，作为文件日期
