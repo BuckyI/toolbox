@@ -59,6 +59,19 @@ class Image():
         else:
             self.tags.extend(tags)
 
+    def rename(self):
+        scr = self.path
+        dst = self.ideal_path
+        if scr == dst:
+            logging.info(f"[RENAME] \"{scr.name}\" unchanged")
+        else:
+            if dst.exists():
+                dst = scr.with_stem(f"{self.ideal_name} {uuid.uuid4()}")
+                logging.warning(
+                    f"\"{dst.name}\" has alreadly existed! try uuid")
+            self.path = scr.rename(dst)  # 进行重命名并对存储的路径进行跟踪
+            logging.info(f"[RENAME] from \"{scr.name}\" to \"{dst.name}\"")
+
 
 def scan(path: str, recursive=False):
     """scan all image files in path (recursicely)"""
