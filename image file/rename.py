@@ -32,3 +32,14 @@ class Window(object):
         self.tag = tk.Entry(frm_tag, show=None, font=('思源黑体', 15))
         self.tag.pack(side=tk.RIGHT)
 
+        # 拖动文件触发重命名
+        windnd.hook_dropfiles(self.root, func=self.rename_selected_images)
+
+    def rename_selected_images(self, urls):
+        paths = [Path(url.decode('gbk')) for url in urls]
+        images = []
+        for p in paths:
+            if not p.exists():  # 路径中存在特殊字符时会读取失败
+                logging.error("load failed due to encoding error): %s", p)
+                continue
+            images.extend(scan(p.absolute()))
