@@ -11,24 +11,26 @@ class Image():
     def __init__(self, path: str):
         self.path = Path(path)
         self.tags = []
-        self.get_timestr()
         self.analyze_filename()
 
-    def get_timestr(self):
-        "获得文件最早创建时间 timestr 作为文件名的一部分"
+    @property
+    def time(self):
+        "文件最早创建时间"
         mtime = self.path.stat().st_mtime
         ctime = self.path.stat().st_ctime
-        self.time = ctime if mtime > ctime else mtime
-        self.timestr = time.strftime('%Y%m%d', time.localtime(self.time))
-        return self.timestr
+        return ctime if mtime > ctime else mtime
+
+    @property
+    def timestr(self):
+        "字符化的文件最早创建时间"
+        return time.strftime('%Y%m%d', time.localtime(self.time))
 
     def analyze_filename(self):
         "从文件名中提取信息"
         tags = self.path.stem.split()
-        # 以 20 开头的 8 位数字，认为是该文件已经标注好的日期信息
         if m := re.match(r"20\d{6}", tags[0]):
+            # 以 20 开头的 8 位数字，认为是该文件已经标注好的日期信息
             # 已标注的优先级较高，作为文件日期
-            self.timestr = m.group()
             self.tags.extend(tags[1:])
         else:
             self.tags.extend(tags)
