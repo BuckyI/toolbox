@@ -53,11 +53,14 @@ class Image():
 
 def scan(path: str, recursive=False):
     """scan all image files in path (recursicely)"""
-    for f in os.scandir(path):
-        if f.is_file() and imghdr.what(f.path):
-            yield Image(f.path)
-        elif recursive and f.is_dir():
-            yield from scan(f.path, recursive)
+    if os.path.isfile(path) and imghdr.what(path):
+        yield Image(path)
+    elif os.path.isdir(path):
+        for f in os.scandir(path):
+            if f.is_file() and imghdr.what(f.path):
+                yield Image(f.path)
+            elif recursive and f.is_dir():
+                yield from scan(f.path, recursive)
     return "scan complete"
 
 
