@@ -8,17 +8,16 @@ import uuid
 
 
 class Image():
-    def __init__(self, file: os.DirEntry):
-        self.file = file
-        self.path = Path(file.path)
+    def __init__(self, path: str):
+        self.path = Path(path)
         self.tags = []
         self.get_timestr()
         self.analyze_filename()
 
     def get_timestr(self):
         "获得文件最早创建时间 timestr 作为文件名的一部分"
-        mtime = self.file.stat().st_mtime
-        ctime = self.file.stat().st_ctime
+        mtime = self.path.stat().st_mtime
+        ctime = self.path.stat().st_ctime
         self.time = ctime if mtime > ctime else mtime
         self.timestr = time.strftime('%Y%m%d', time.localtime(self.time))
         return self.timestr
@@ -56,7 +55,7 @@ def scan(path: str, recursive=False):
     """scan all image files in path (recursicely)"""
     for f in os.scandir(path):
         if f.is_file() and imghdr.what(f.path):
-            yield Image(f)
+            yield Image(f.path)
         elif recursive and f.is_dir():
             yield from scan(f.path, recursive)
     return "scan complete"
@@ -77,7 +76,7 @@ if __name__ == "__main__":
     source = os.path.realpath(source)
 
     # find image files at source folder
-    images = (Image(f) for f in os.scandir(source)
+    images = (Image(f.path) for f in os.scandir(source)
               if f.is_file() and imghdr.what(f.path))
 
     for img in images:
