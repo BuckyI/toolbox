@@ -52,6 +52,16 @@ class Image():
             self.tags.extend(tags)
 
 
+def scan(path: str, recursive=False):
+    """scan all image files in path (recursicely)"""
+    for f in os.scandir(path):
+        if f.is_file() and imghdr.what(f.path):
+            yield Image(f)
+        elif recursive and f.is_dir():
+            yield from scan(f.path, recursive)
+    return "scan complete"
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s: %(message)s')
