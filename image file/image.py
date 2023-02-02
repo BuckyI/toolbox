@@ -42,7 +42,14 @@ class Image():
     @property
     def ideal_name(self):
         "图片名：时间信息 + 标签 + 必要的序号"
-        return self.timestr + " " + " ".join(self.tags)
+        infos = []
+        infos.append(self.timestr)
+        infos.extend(self.tags)
+        return " ".join(infos)
+
+    @property
+    def ideal_path(self):
+        return self.path.with_stem(self.ideal_name)
 
     def set_tags(self, tags: list, *, reset=False):
         if reset:
