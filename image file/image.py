@@ -128,14 +128,4 @@ if __name__ == "__main__":
         # tags = input(f"input tags of {img.file.name}: ")
         img.set_tags("tag1 tag2".split(), reset=True)
         # rename
-        scr = img.path
-        dst = scr.with_stem(img.ideal_name)
-        if scr == dst:
-            logging.info(f"[RENAME] \"{scr.name}\" unchanged")
-        else:
-            if dst.exists():
-                dst = scr.with_stem(f"{img.ideal_name} {uuid.uuid4()}")
-                logging.warning(
-                    f"\"{dst.name}\" has alreadly existed! try uuid")
-            scr.rename(dst)
-            logging.info(f"[RENAME] from \"{scr.name}\" to \"{dst.name}\"")
+        img.rename()
