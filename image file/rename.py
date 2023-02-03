@@ -64,3 +64,30 @@ class Window(object):
         else:  # default behavior of Image
             pass
 
+        # sort images to avoid name conflict
+        sorted_images = {}
+        for img in images:  # 根据期望路径为图片归类
+            path = img.ideal_path
+            img_ls = sorted_images.setdefault(path, [])
+            img_ls.append(img)
+        for path in sorted_images:
+            img_ls = sorted_images[path]
+            if len(img_ls) == 1:
+                img_ls[0].rename()
+            else:
+                # 存在多个同名文件，按照时间从小到大排序添加序号
+                img_ls.sort(
+                    key=lambda img: img.time,
+                    reverse=False,
+                )
+                for index, img in enumerate(img_ls):
+                    img.index = index + 1  # 序号从 1 开始
+                    img.rename()
+        showinfo(message="Image rename completed")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s - %(levelname)s: %(message)s')
+    add_handler()
+    w = Window()
