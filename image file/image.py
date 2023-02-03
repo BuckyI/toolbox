@@ -12,6 +12,7 @@ class Image():
         self.path = Path(path)
         self.tags = []
         self.analyze_filename()
+        self.index = 0  # 同系列图片的序号
 
     @property
     def time(self):
@@ -47,6 +48,8 @@ class Image():
         infos = []
         infos.append(self.timestr)
         infos.extend(self.tags)
+        if self.index != 0:
+            infos.append(str(self.index))
         return " ".join(infos)
 
     @property
