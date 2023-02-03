@@ -86,16 +86,25 @@ def scan(path: str, recursive=False):
     return "scan complete"
 
 
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s - %(levelname)s: %(message)s')
+def add_handler():
+    "部分图片处理 log 输出到本地文件"
+    name = "Image Info to File Log"
+    if name in [h.name for h in logging.root.handlers]:
+        return  # 已经存在了就不重复添加
     handler = logging.FileHandler("images_change.log")
+    handler.set_name(name)
     handler.setLevel(logging.INFO)
     handler.addFilter(lambda s: "[RENAME]" in s.msg)  # msg 含 RENAME 时，保存到文件
     handler.setFormatter(logging.Formatter('%(asctime)s : %(message)s'))
-    rootLogger = logging.getLogger()
-    rootLogger.addHandler(handler)  # add handler to root logger
+    logging.root.addHandler(handler)  # add handler to root logger
+    logging.debug("add log handler '%s' to '%s'", handler.name,
+                  logging.root.name)
 
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s - %(levelname)s: %(message)s')
+    add_handler()
     source = r"image file/test/"
     # 转换成绝对路径，避免混淆（？）后续 f.path 也会变成绝对路径
     source = os.path.realpath(source)
