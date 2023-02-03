@@ -2,9 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import askokcancel, showinfo
 import windnd
-
+import uuid
 import logging
-from image import Image, scan
+from image import Image, scan, add_handler
+from pathlib import Path
 
 
 class Window(object):
@@ -37,9 +38,29 @@ class Window(object):
 
     def rename_selected_images(self, urls):
         paths = [Path(url.decode('gbk')) for url in urls]
+
+        # load images
         images = []
         for p in paths:
             if not p.exists():  # 路径中存在特殊字符时会读取失败
                 logging.error("load failed due to encoding error): %s", p)
                 continue
             images.extend(scan(p.absolute()))
+
+        # load tags
+        tag_type = self.tag_type.get()
+        if tag_type == "无标签":
+            tags = []
+            for img in images:
+                img.set_tags(tags, reset=True)
+        elif tag_type == "自定义标签":
+            tags = self.tag.get().split()
+            for img in images:
+                img.set_tags(tags, reset=True)
+        elif tag_type == "文件名作为标签":
+            tags = img.path.name.split()
+            for img in images:
+                img.set_tags(tags, reset=True)
+        else:  # default behavior of Image
+            pass
+
