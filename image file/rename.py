@@ -6,6 +6,15 @@ import uuid
 import logging
 from image import Image, scan, add_handler
 from pathlib import Path
+import enum
+
+
+class TagMode(enum.Enum):
+    "Combobox 选项"
+    NoTags = "无标签"
+    CustomTags = "自定义标签"
+    FileNameTags = "文件名作为标签"
+    DefaultTags = "自动识别标签（程序默认）"
 
 
 class Window(object):
@@ -20,12 +29,12 @@ class Window(object):
         # 设定图片标签
         frm_tag = tk.LabelFrame(self.root, text="设定标签")
         frm_tag.pack()
-        self.tag_type = tk.StringVar()  # 如何添加标签
+        self.tagmode = tk.StringVar()  # 存储当前选项
         com = ttk.Combobox(
             master=frm_tag,  # 父容器
             state='readonly',  # 设置状态 normal(可选可输入)、readonly(只可选)、 disabled
-            textvariable=self.tag_type,
-            values=["无标签", "自定义标签", "文件名作为标签"],  # 设置下拉框的选项
+            textvariable=self.tagmode,
+            values=[i.value for i in TagMode],  # 设置下拉框的选项
         )
         com.current(0)  # 默认无标签
         com.pack(side=tk.LEFT)
@@ -48,20 +57,21 @@ class Window(object):
             images.extend(scan(p.absolute()))
 
         # load tags
-        tag_type = self.tag_type.get()
-        if tag_type == "无标签":
+        mode = TagMode(self.tagmode.get())
+        if mode == TagMode.NoTags:
             tags = []
             for img in images:
                 img.set_tags(tags, reset=True)
-        elif tag_type == "自定义标签":
+        elif mode == TagMode.CustomTags:
             tags = self.tag.get().split()
             for img in images:
                 img.set_tags(tags, reset=True)
-        elif tag_type == "文件名作为标签":
+        elif mode == TagMode.FileNameTags:
             for img in images:
                 tags = img.path.stem.split()
                 img.set_tags(tags, reset=True)
-        else:  # default behavior of Image
+        elif mode == TagMode.DefaultTags:
+            # default behavior of Image
             pass
 
         # sort images to avoid name conflict
