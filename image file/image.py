@@ -29,17 +29,25 @@ class Image():
     def analyze_filename(self):
         "从文件名中提取信息"
         tags = self.path.stem.split()
-        if m := re.match(r"20\d{6}", tags[0]):
-            # 以 20 开头的 8 位数字，认为是该文件已经标注好的日期信息
-            # 已标注的优先级较高，作为文件日期
-            self.tags.extend(tags[1:])
-        else:
-            self.tags.extend(tags)
+        # filter unwanted tags
+        clean_tags = []
+        for tag in tags:
+            if m := re.match(r"20\d{6}", tag):
+                # 日期信息，已标注的优先级较高，可作为文件日期
+                # TODO: 这里可以添加一个识别日期的 class，多添加需要的模式
+                # TODO: 根据文件名识别日期，修改文件本身的日期
+                pass
+            elif re.match(r"[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}", tag):
+                # uuid
+                pass
+            else:
+                # 标签可能以 `#`开头，去掉这个不必要的标识
+                tag = re.match(r"#?(.*)", tag).group(1)
+                clean_tags.append(tag)
         # 最后一个标签是数字时（一般是为避免重名标的序号或无意义）可舍弃
-        if len(self.tags) > 0 and self.tags[-1].isdigit():
-            self.tags.pop()
-        # 标签可能以 `#`开头，去掉这个不必要的标识
-        self.tags = [re.match(r"#?(.*)", s).group(1) for s in self.tags]
+        if len(clean_tags) > 0 and clean_tags[-1].isdigit():
+            clean_tags.pop()
+        self.tags = clean_tags
         logging.debug("from filename get tags: %s", self.tags)
 
     @property
