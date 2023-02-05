@@ -8,3 +8,4 @@ gathering my functions together
 - 图片文件整理（重命名）：
     运行 `rename.py`，拖动图片文件 | 包含图片的文件夹到 GUI 窗口。
     文件关键信息的修改历史保存在 `images_change.log`，如果出现误处理可以追溯原始信息。
+    ![alt](assets\20230205.gif)
