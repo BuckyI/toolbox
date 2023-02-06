@@ -11,10 +11,10 @@ import enum
 
 class TagMode(enum.Enum):
     "Combobox 选项"
+    DefaultTags = "自动识别标签（程序默认）"
     NoTags = "无标签"
     CustomTags = "自定义标签"
     FileNameTags = "文件名作为标签"
-    DefaultTags = "自动识别标签（程序默认）"
 
 
 class Window(object):
