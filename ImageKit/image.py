@@ -157,7 +157,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s: %(message)s')
     add_handler()
-    source = r"image file/test/"
+    source = r"imageKit/test/"
     # 转换成绝对路径，避免混淆（？）后续 f.path 也会变成绝对路径
     source = os.path.realpath(source)
 
