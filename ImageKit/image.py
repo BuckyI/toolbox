@@ -40,6 +40,8 @@ class Image():
             elif re.match(r"[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}", tag):
                 # uuid
                 pass
+            elif "jike" in tag:
+                clean_tags.append("jike")
             else:
                 # 标签可能以 `#`开头，去掉这个不必要的标识
                 tag = re.match(r"#?(.*)", tag).group(1)
