@@ -12,7 +12,9 @@ class Image():
     def __init__(self, path: str):
         self.path = Path(path)
         self.tags = []
+        self.extracted_timestr = None
         self.analyze_filename()
+        self.set_time_status(self.extracted_timestr)  # 修正图片创建时间
         self.index = 0  # 同系列图片的序号
 
     @property
@@ -36,7 +38,7 @@ class Image():
             if m := re.match(r"20\d{6}", tag):
                 # 日期信息，已标注的优先级较高，可作为文件日期
                 # TODO: 这里可以添加一个识别日期的 class，多添加需要的模式
-                self.set_time_status(m.group())  # 读取的日期参与设定
+                self.extracted_timestr = m.group()
             elif re.match(r"[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}", tag):
                 # uuid
                 pass
@@ -85,7 +87,7 @@ class Image():
             self.path = scr.rename(dst)  # 进行重命名并对存储的路径进行跟踪
             logging.info(f"[RENAME] from \"{scr.name}\" to \"{dst.name}\"")
 
-    def set_time_status(self, set_time: str, format="%Y%m%d"):
+    def set_time_status(self, set_time: str = None, format="%Y%m%d"):
         """change file time status, it compares folowing three times
         set the create time with the earlist proper one
         - input set_time
@@ -95,19 +97,21 @@ class Image():
         def str_time(t):
             return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t))
 
-        try:
-            st_stime = time.strptime(set_time, format)
-            stime = time.mktime(st_stime)
-        except OverflowError:
-            logging.error("输入的时间错误 %s", set_time)
-            return
-
         # 候选人
-        times = [self.path.stat().st_ctime, self.path.stat().st_mtime, stime]
-        # 由于输入字符串只有年月日，默认的时分秒为0，要避免因此而误调整
-        st_times = [time.localtime(t)[0:3] for t in times]  # 计算出年月日
-        if st_times[0] == st_times[2] or st_times[1] == st_times[2]:
-            times.pop()
+        times = [self.path.stat().st_ctime, self.path.stat().st_mtime]
+        if set_time:
+            try:
+                st_stime = time.strptime(set_time, format)
+                stime = time.mktime(st_stime)
+                # 由于输入字符串只有年月日，默认的时分秒为0，要避免因此而误调整
+                st_times = [time.localtime(t)[0:3] for t in times]
+                st_stime = st_stime[0:3]
+                if st_times[0] != st_stime and st_times[1] != st_stime:
+                    times.append(stime)
+            except OverflowError:
+                logging.error("输入的时间错误 %s", set_time)
+                return
+
         # 找到最远的时间
         i = times.index(min(times))
         if i != 0:
