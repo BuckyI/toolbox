@@ -53,6 +53,7 @@ class Window(object):
         for p in paths:
             if not p.exists():  # 路径中存在特殊字符时会读取失败
                 logging.error("load failed due to encoding error): %s", p)
+                showinfo(message=f"load failed due to encoding error): {p}")
                 continue
             images.extend(scan(p.absolute()))
 
