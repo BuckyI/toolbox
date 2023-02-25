@@ -140,15 +140,15 @@ class mkdocsYAML():
         return self
 
     def build(self):
-        assert self.yaml.exists(), "文档路径错误"
+        assert self.yaml.exists(), f"文档路径错误 {self.yaml.absolute()}"
         subprocess.run(
             ['mkdocs', 'build', '--config-file',
              self.yaml.absolute()])
         return self
 
-    def __del__(self):
-        if self.yaml and not self.keep_yaml:
-            self.yaml.unlink()
+    # def __del__(self):
+        # if self.yaml and not self.keep_yaml:
+        #     self.yaml.unlink()
 
 
 if __name__ == '__main__':
