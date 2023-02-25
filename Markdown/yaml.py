@@ -4,6 +4,7 @@ import io
 import os
 import subprocess
 from pathlib import Path
+from datetime import datetime
 
 
 class mkdocsYAML():
@@ -29,8 +30,18 @@ class mkdocsYAML():
         self.data['theme'] = {
             "name":
             "material",
-            "features":
-            ["navigation.tabs", "navigation.indexes", "navigation.top"],
+            "features": [
+                # "navigation.tabs",
+                "navigation.sections",
+                "navigation.expand",
+                "navigation.indexes",
+                "navigation.top",
+                # "navigation.instant",
+                # "navigation.tracking",
+                "search.suggest",
+                "search.highlight",
+                "header.autohide",
+            ],
             "language":
             "zh",
             "palette": [{
@@ -103,11 +114,14 @@ class mkdocsYAML():
                 }
             }
         ]
+        self.data['plugins'] = ["offline", "search"]
         self.data['extra_javascript'] = [
             'javascripts/mathjax.js',
             'https://polyfill.io/v3/polyfill.min.js?features=es6',
             'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
         ]
+        self.data['copyright'] = "Copyright &copy; {} Mightymjolnir".format(
+            datetime.today().year)
 
     def generate_yaml(self):
         outpath = Path(self.yaml_path) / 'mkdocs.yaml'
@@ -147,6 +161,8 @@ if __name__ == '__main__':
     ym = mkdocsYAML(site_name='test:)',
                     site_dir=site_dir,
                     docs_dir=docs_dir,
-                    keep_yaml=False)
+                    keep_yaml=True)
     # subprocess.run(['mkdocs', 'build', '--config-file', 'mkdocs.yaml'])
     ym.build()
+
+    # subprocess.run(['mkdocs', 'build', '--config-file', "mkdocs.yaml"])
