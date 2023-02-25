@@ -1,7 +1,9 @@
 from PySide2.QtWidgets import QApplication, QMessageBox, QFileDialog
 from PySide2.QtUiTools import QUiLoader
 from PySide2.QtCore import Slot
+from pathlib import Path
 import os
+from yaml import mkdocsYAML
 
 
 class Window():
@@ -17,6 +19,7 @@ class Window():
         # self.ui.button.clicked.connect(self.handleCalc)
         self.ui.select_source.clicked.connect(lambda: self.set_folder(0))
         self.ui.select_dest.clicked.connect(lambda: self.set_folder(1))
+        self.ui.buildButton.clicked.connect(self.build)
 
         self.ui.show()
         app.exec_()
@@ -30,12 +33,30 @@ class Window():
             self.ui.destination.setText(FileDirectory)
             print(FileDirectory)
 
-    # def handleCalc(self):
-    #     pass
+    def build(self):
+        """
+        source 为源文件夹，在 dest 下创建同名文件夹存放 html
+        """
+        source = Path(self.ui.source.text())
+        dest = Path(self.ui.destination.text()) / source.name
+        if not dest.exists():
+            dest.mkdir()
+        # Show the message box and get the user's response
+        msg = str(source) + "\n------>\n" + str(dest)
+        msgBox = QMessageBox(QMessageBox.Question, "Confirm Paths", msg,
+                             QMessageBox.Yes | QMessageBox.No)
+        reply = msgBox.exec_()
+        # Check if the user clicked yes
+        if reply == QMessageBox.Yes:
+            my = mkdocsYAML(site_name=source.name,
+                            site_dir=dest,
+                            docs_dir=source)
+            my.build()
+            QMessageBox(QMessageBox.Information, "Success", "Build completed.",
+                        QMessageBox.Ok).exec_()
 
 
 if __name__ == "__main__":
     # 切换工作路径到脚本所在文件夹
-    scr_path = os.path.split(os.path.realpath(__file__))[0]
-    os.chdir(scr_path)
+    os.chdir(Path(__file__).absolute().parent)
     window = Window()

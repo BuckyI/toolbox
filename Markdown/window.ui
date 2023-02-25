@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="documentMode">
       <bool>false</bool>
@@ -113,6 +113,13 @@
        <string>YAML选项</string>
       </attribute>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="buildButton">
+     <property name="text">
+      <string>build!</string>
+     </property>
     </widget>
    </item>
    <item>
