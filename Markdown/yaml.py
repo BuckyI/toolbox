@@ -3,23 +3,28 @@ import re
 import io
 import os
 import subprocess
+from pathlib import Path
 
 
-class YAMLGenerator():
+class mkdocsYAML():
     def __init__(self,
                  *,
                  site_name='MkDocsPage',
                  docs_dir='docs',
-                 site_dir='sites'):
+                 site_dir='sites',
+                 keep_yaml=False):
         self.data = {}
         self.yaml_path = "."
-
-        self.configure()
+        self.keep_yaml = keep_yaml
+        self.basic_configure()
         self.data['site_name'] = site_name
-        self.data['docs_dir'] = os.path.abspath(docs_dir)
-        self.data['site_dir'] = os.path.abspath(site_dir)
+        self.data['docs_dir'] = str(Path(docs_dir).absolute())
+        self.data['site_dir'] = str(Path(site_dir).absolute())
 
-    def configure(self):
+        self.yaml = None
+        self.generate_yaml()
+
+    def basic_configure(self):
         self.data['site_name'] = 'MkDocsPage'
         self.data['theme'] = {
             "name":
@@ -104,11 +109,8 @@ class YAMLGenerator():
             'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
         ]
 
-    def save(self, path=None):
-        if path:
-            self.yaml_path = path
-        outpath = os.path.join(self.yaml_path, 'mkdocs.yaml')
-
+    def generate_yaml(self):
+        outpath = Path(self.yaml_path) / 'mkdocs.yaml'
         with io.StringIO() as buffer:
             yaml = YAML()
             yaml.dump(self.data, buffer)
@@ -120,13 +122,31 @@ class YAMLGenerator():
                            count=1)
             with open(outpath, mode='w', encoding='utf-8') as f:
                 f.write(texts)
+        self.yaml = outpath
+        return self
+
+    def build(self):
+        assert self.yaml.exists(), "文档路径错误"
+        subprocess.run(
+            ['mkdocs', 'build', '--config-file',
+             self.yaml.absolute()])
+        return self
+
+    def __del__(self):
+        if self.yaml and not self.keep_yaml:
+            self.yaml.unlink()
 
 
 if __name__ == '__main__':
     # 切换工作路径到脚本所在文件夹
-    scr_path = os.path.split(os.path.realpath(__file__))[0]
-    os.chdir(scr_path)
-    print(scr_path)
-    # ym = YAMLGenerator(site_dir='./test/site/', docs_dir='./test/docs')
-    # ym.save()
-    # subprocess.call(['mkdocs', 'build'])
+    os.chdir(Path(__file__).absolute().parent)
+
+    site_dir = './test/site/'
+    docs_dir = './test/docs'
+    # 生成
+    ym = mkdocsYAML(site_name='test:)',
+                    site_dir=site_dir,
+                    docs_dir=docs_dir,
+                    keep_yaml=False)
+    # subprocess.run(['mkdocs', 'build', '--config-file', 'mkdocs.yaml'])
+    ym.build()
