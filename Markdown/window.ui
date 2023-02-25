@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>280</height>
+    <width>470</width>
+    <height>197</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -116,11 +116,22 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="buildButton">
-     <property name="text">
-      <string>build!</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="buildButton">
+       <property name="text">
+        <string>build!</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="batchbuildButton">
+       <property name="text">
+        <string>batch build!</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
