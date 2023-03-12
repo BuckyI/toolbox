@@ -19,3 +19,6 @@ gathering my functions together
 
 1. build: 源文件夹当作文档文件夹，在目标文件夹创建同名文件夹存放 html
 2. batch build: 源文件夹里有多个文档文件夹，在目标文件夹分别创建同名文件夹存放 html
+3. checkbox 设定是否要添加 navigation.tab 特性
+
+> 不准备进一步更新这个功能了，因为太复杂的需求直接手动自定义 mkdocs.yaml 文件即可。
