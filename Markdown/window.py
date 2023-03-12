@@ -1,20 +1,16 @@
-from PySide2.QtWidgets import QApplication, QMessageBox, QFileDialog
-from PySide2.QtUiTools import QUiLoader
-from PySide2.QtCore import Slot
+from PyQt5.QtWidgets import QApplication, QMessageBox, QFileDialog
+from PyQt5.uic import loadUi
 from pathlib import Path
 import os
 from yaml import mkdocsYAML
 
 
 class Window():
+
     def __init__(self):
         app = QApplication([])
         # 从文件中加载UI定义
-
-        # 从 UI 定义中动态 创建一个相应的窗口对象
-        # 注意：里面的控件对象也成为窗口对象的属性了
-        # 比如 self.ui.button , self.ui.textEdit
-        self.ui = QUiLoader().load('window.ui')
+        self.ui = loadUi('window.ui')
 
         # self.ui.button.clicked.connect(self.handleCalc)
         self.ui.select_source.clicked.connect(lambda: self.set_folder(0))
