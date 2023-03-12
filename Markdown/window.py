@@ -2,11 +2,10 @@ from PyQt5.QtWidgets import QApplication, QMessageBox, QFileDialog
 from PyQt5.uic import loadUi
 from pathlib import Path
 import os
-from yaml import mkdocsYAML
+from yaml import mkdocsYAML, Feature
 
 
 class Window():
-
     def __init__(self):
         app = QApplication([])
         # 从文件中加载UI定义
@@ -45,9 +44,15 @@ class Window():
         reply = msgBox.exec_()
         # Check if the user clicked yes
         if reply == QMessageBox.Yes:
-            my = mkdocsYAML(site_name=source.name,
-                            site_dir=dest,
-                            docs_dir=source)
+            if self.ui.check_nav_tab.isChecked():
+                my = mkdocsYAML(site_name=source.name,
+                                site_dir=dest,
+                                docs_dir=source,
+                                features=[Feature.nav_tabs])
+            else:
+                my = mkdocsYAML(site_name=source.name,
+                                site_dir=dest,
+                                docs_dir=source)
             my.build()
             QMessageBox(QMessageBox.Information, "Success", "Build completed.",
                         QMessageBox.Ok).exec_()

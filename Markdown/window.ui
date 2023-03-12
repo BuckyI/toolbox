@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>470</width>
-    <height>197</height>
+    <height>241</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="documentMode">
       <bool>false</bool>
@@ -112,6 +112,19 @@
       <attribute name="title">
        <string>YAML选项</string>
       </attribute>
+      <widget class="QCheckBox" name="check_nav_tab">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>101</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>navigation.tabs</string>
+       </property>
+      </widget>
      </widget>
     </widget>
    </item>

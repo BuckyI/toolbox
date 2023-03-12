@@ -7,12 +7,27 @@ from pathlib import Path
 from datetime import datetime
 
 
+class Feature():
+    nav_tabs = "navigation.tabs"
+    nav_sections = "navigation.sections"
+    nav_expand = "navigation.expand"
+    nav_indexes = "navigation.indexes"
+    nav_top = "navigation.top"
+    nav_instant = "navigation.instant"
+    nav_tracking = "navigation.tracking"
+    search_suggest = "search.suggest"
+    search_highlight = "search.highlight"
+    header_autohide = "header.autohide"
+
+
 class mkdocsYAML():
+
     def __init__(self,
                  *,
                  site_name='MkDocsPage',
                  docs_dir='docs',
                  site_dir='sites',
+                 features: list[str] = None,
                  keep_yaml=False):
         self.data = {}
         self.yaml_path = "."
@@ -21,6 +36,11 @@ class mkdocsYAML():
         self.data['site_name'] = site_name
         self.data['docs_dir'] = str(Path(docs_dir).absolute())
         self.data['site_dir'] = str(Path(site_dir).absolute())
+        if features:
+            features = [
+                i for i in features if i not in self.data['theme']['features']
+            ]
+            self.data['theme']['features'].extend(features)
 
         self.yaml = None
         self.generate_yaml()
@@ -31,16 +51,16 @@ class mkdocsYAML():
             "name":
             "material",
             "features": [
-                # "navigation.tabs",
-                "navigation.sections",
-                "navigation.expand",
-                "navigation.indexes",
-                "navigation.top",
-                # "navigation.instant",
-                # "navigation.tracking",
-                "search.suggest",
-                "search.highlight",
-                "header.autohide",
+                # Feature.nav_tabs,
+                Feature.nav_sections,
+                Feature.nav_expand,
+                Feature.nav_indexes,
+                Feature.nav_top,
+                # Feature.nav_instant,
+                # Feature.nav_tracking,
+                Feature.search_suggest,
+                Feature.search_highlight,
+                Feature.header_autohide,
             ],
             "language":
             "zh",
@@ -147,8 +167,8 @@ class mkdocsYAML():
         return self
 
     # def __del__(self):
-        # if self.yaml and not self.keep_yaml:
-        #     self.yaml.unlink()
+    # if self.yaml and not self.keep_yaml:
+    #     self.yaml.unlink()
 
 
 if __name__ == '__main__':
@@ -161,8 +181,10 @@ if __name__ == '__main__':
     ym = mkdocsYAML(site_name='test:)',
                     site_dir=site_dir,
                     docs_dir=docs_dir,
+                    features=['navigation.tabs', "navigation.indexes"],
                     keep_yaml=True)
     # subprocess.run(['mkdocs', 'build', '--config-file', 'mkdocs.yaml'])
-    ym.build()
+    # ym.build()
+    ym.generate_yaml()
 
     # subprocess.run(['mkdocs', 'build', '--config-file', "mkdocs.yaml"])
