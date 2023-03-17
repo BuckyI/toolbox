@@ -3,6 +3,7 @@ import json
 from pprint import pprint
 import argparse
 import time
+import subprocess
 
 
 def scan_dir(top: str):
@@ -50,4 +51,9 @@ if __name__ == "__main__":
     # with open(name, "r", encoding="utf-8") as f:
     #     file_tree = json.load(f)
     #     pprint(file_tree)
-    print(f"finished🎃 \nfrom: {top}\nto: {name}")
+
+    # save interactive html
+    html_name = os.path.splitext(name)[0] + ".html"
+    subprocess.run(['json2tree', '-j', name, '-o', html_name, '-t', '1'])
+
+    print(f"finished🎃 \nfrom: {top}\nto: {name} & html")
