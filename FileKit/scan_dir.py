@@ -45,8 +45,9 @@ if __name__ == "__main__":
     name = " ".join(names) + ".json"
     name = os.path.abspath(os.path.join(args.output, name))
     assert not os.path.exists(name)
-    with open(name, "w") as f:
-        json.dump(file_tree, f)
-    # with open("test.json", "r") as f:
+    with open(name, "w", encoding="utf-8") as f:
+        json.dump(file_tree, f, ensure_ascii=False, sort_keys=True)
+    # with open(name, "r", encoding="utf-8") as f:
     #     file_tree = json.load(f)
+    #     pprint(file_tree)
     print(f"finished🎃 \nfrom: {top}\nto: {name}")
