@@ -22,3 +22,10 @@ gathering my functions together
 3. checkbox 设定是否要添加 navigation.tab 特性
 
 > 不准备进一步更新这个功能了，因为太复杂的需求直接手动自定义 mkdocs.yaml 文件即可。
+
+**扫描并保存文件夹下的文件结构**
+`python FileKit/scan_dir.py --folder <folder to be scanned> --output <output folder>`
+
+- 隐藏文件也能够被扫描到，但是在扫描结果中不会区分
+- 默认不会进入符号链接
+- 需要模块 `json2tree`
