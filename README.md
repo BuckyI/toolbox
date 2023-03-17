@@ -28,4 +28,3 @@ gathering my functions together
 
 - 隐藏文件也能够被扫描到，但是在扫描结果中不会区分
 - 默认不会进入符号链接
-- 需要模块 `json2tree`
