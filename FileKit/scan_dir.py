@@ -27,9 +27,9 @@ if __name__ == "__main__":
                         default=".")
     args = parser.parse_args()
 
-    # 切换工作目录至脚本所在文件夹，影响相对路径的解读
-    scr_path = os.path.split(os.path.realpath(__file__))[0]
-    os.chdir(scr_path)
+    # # 切换工作目录至脚本所在文件夹，影响相对路径的解读
+    # scr_path = os.path.split(os.path.realpath(__file__))[0]
+    # os.chdir(scr_path)
     assert os.path.exists(args.folder), "given folder dosen't exist!"
     assert os.path.exists(args.output), "output folder dosen't exist!"
 
