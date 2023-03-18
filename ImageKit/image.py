@@ -138,6 +138,9 @@ class NameChecker():
     def is_uuid(self, s):
         return re.match(r"[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}", s)
 
+    def is_digit(self, s):
+        return s.isdigit()
+
     def get_date(self, s):
         #  recognize a date string with YYYY-MM-DD HH:mm:ss
         pattern = r'(?P<year>20\d{2})(?P<month>\d{2})(?P<day>\d{2})(?P<detail>(?P<hour>\d{2})(?P<minute>\d{2})(?P<second>\d{2}))?'
@@ -169,7 +172,7 @@ class NameChecker():
     def name_sensible(self, s, tolerant=True):
         "contains either English word or Chinese character"
         if (self.contains_English(s) or self.contains_Chinese(s)
-                or self.contains_special_word(s)):
+                or self.contains_special_word(s) or self.is_digit(s)):
             return True
         elif self.is_uuid(s):
             return False
