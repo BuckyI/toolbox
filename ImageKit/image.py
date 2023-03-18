@@ -6,6 +6,7 @@ import time
 import re
 import uuid
 from win32_setctime import setctime
+import enchant
 
 
 class Image():
@@ -31,27 +32,9 @@ class Image():
 
     def analyze_filename(self):
         "从文件名中提取信息"
-        tags = self.path.stem.split()
-        # filter unwanted tags
-        clean_tags = []
-        for tag in tags:
-            if m := re.match(r"20\d{6}", tag):
-                # 日期信息，已标注的优先级较高，可作为文件日期
-                # TODO: 这里可以添加一个识别日期的 class，多添加需要的模式
-                self.extracted_timestr = m.group()
-            elif re.match(r"[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}", tag):
-                # uuid
-                pass
-            elif "jike" in tag:
-                clean_tags.append("jike")
-            else:
-                # 标签可能以 `#`开头，去掉这个不必要的标识
-                tag = re.match(r"#?(.*)", tag).group(1)
-                clean_tags.append(tag)
-        # 最后一个标签是数字时（一般是为避免重名标的序号或无意义）可舍弃
-        if len(clean_tags) > 0 and clean_tags[-1].isdigit():
-            clean_tags.pop()
-        self.tags = clean_tags
+        nc = NameChecker(self.path.stem)
+        self.tags = nc.get_tags()
+        self.extracted_timestr = nc.date
         logging.debug("from filename get tags: %s", self.tags)
 
     @property
@@ -132,6 +115,84 @@ def scan(path: str, recursive=False):
             elif recursive and f.is_dir():
                 yield from scan(f.path, recursive)
     return "scan complete"
+
+
+class NameChecker():
+    "从名称中提取信息"
+    special_word = ["jike"]
+
+    def __init__(self, name):
+        self.name = name
+        self.tags = name.split()
+        self.date = None
+
+    def contains_English(self, s):
+        words = s.split()
+        english_dict = enchant.Dict("en_US")
+        # Check if any of the words are in the English dictionary
+        return any(english_dict.check(word) for word in words)
+
+    def contains_Chinese(self, s):
+        return any(re.search(r'[\u4e00-\u9fff]', char) for char in s)
+
+    def is_uuid(self, s):
+        return re.match(r"[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}", s)
+
+    def get_date(self, s):
+        #  recognize a date string with YYYY-MM-DD HH:mm:ss
+        pattern = r'(?P<year>20\d{2})(?P<month>\d{2})(?P<day>\d{2})(?P<detail>(?P<hour>\d{2})(?P<minute>\d{2})(?P<second>\d{2}))?'
+        match = re.match(pattern, s)
+        if match is None:
+            return False  # not a date
+        date_dict = match.groupdict()
+
+        # Check if the date values are valid
+        if not (1 <= int(date_dict['month']) <= 12
+                and 1 <= int(date_dict['day']) <= 31):
+            return False
+        # Check if hour, minute, and second are valid
+        if date_dict['detail'] and not (0 <= int(date_dict['hour']) <= 23 and
+                                        0 <= int(date_dict['minute']) <= 59 and
+                                        0 <= int(date_dict['second']) <= 59):
+            return False
+        self.date = match.group()
+        return True
+
+    def contains_special_word(self, s):
+        "some name has special meanings, like 'jike' means an app"
+        for i in self.special_word:
+            if i in s:
+                return True
+        else:
+            return False
+
+    def name_sensible(self, s, tolerant=True):
+        "contains either English word or Chinese character"
+        if (self.contains_English(s) or self.contains_Chinese(s)
+                or self.contains_special_word(s)):
+            return True
+        elif self.is_uuid(s):
+            return False
+        else:  # not matched by any rules, return tolerant
+            return tolerant
+
+    def clean_prefix(self, s):
+        return re.match(r"#?(.*)", s).group(1)
+
+    def get_tags(self):
+        result = []
+        for tag in self.tags:
+            if not self.date and self.get_date(tag):
+                # if not have date, then get date, if success, continue
+                continue
+            if self.name_sensible(tag):
+                tag = self.clean_prefix(tag)
+                result.append(tag)
+        else:
+            # 最后一个标签是数字时（一般是为避免重名标的序号或无意义）可舍弃
+            if len(result) > 0 and result[-1].isdigit():
+                result.pop()
+            return result
 
 
 def add_handler():
