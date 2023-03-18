@@ -28,3 +28,20 @@ gathering my functions together
 
 - 隐藏文件也能够被扫描到，但是在扫描结果中不会区分
 - 默认不会进入符号链接
+
+json 文件结构大致如下：
+
+```json
+{
+    "root": "c:\\Users\\Username\\Documents\\GitHub\\toolbox\\FileKit",
+    "c:\\Users\\Username\\Documents\\GitHub\\toolbox\\FileKit": {
+        "depth": 0,
+        "dirnames": [],
+        "filenames": [
+            "scan_dir.py",
+            "test.ipynb",
+            "test.json"
+        ]
+    }
+}
+```
