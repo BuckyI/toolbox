@@ -141,7 +141,8 @@ class NameChecker():
     def is_digit(self, s):
         return s.isdigit()
 
-    def get_date(self, s):
+    def _get_date(self, s):
+        "deprecated"
         #  recognize a date string with YYYY-MM-DD HH:mm:ss
         pattern = r'(?P<year>20\d{2})(?P<month>\d{2})(?P<day>\d{2})(?P<detail>(?P<hour>\d{2})(?P<minute>\d{2})(?P<second>\d{2}))?'
         match = re.match(pattern, s)
@@ -160,6 +161,19 @@ class NameChecker():
             return False
         self.date = match.group()
         return True
+
+    def get_date(self, s):
+        pattern = r'(20\d{6})(\d{6})?'
+        match = re.match(pattern, s)
+        if match is None:
+            return False  # not a date
+        format = "%Y%m%d%H%M%S" if match.group(2) else "%Y%m%d"
+        try:
+            st_time = time.strptime(s, format)
+            self.date = time.strftime("%Y%m%d", st_time)
+            return True
+        except ValueError:
+            return False
 
     def contains_special_word(self, s):
         "some name has special meanings, like 'jike' means an app"
