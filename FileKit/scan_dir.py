@@ -18,6 +18,13 @@ def scan_dir(top: str):
     return file_tree
 
 
+def compare_dir(dir1, dir2):
+    file_tree1 = scan_dir(dir1)
+    file_tree2 = scan_dir(dir2)
+    diff = set(file_tree1.keys()) ^ set(file_tree2.keys())
+    return diff
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--folder",
@@ -54,7 +61,8 @@ if __name__ == "__main__":
 
     # save interactive html
     html_name = os.path.splitext(name)[0] + ".html"
-    html = json2html.convert(json=file_tree, table_attributes="border='1 solid black'")
+    html = json2html.convert(json=file_tree,
+                             table_attributes="border='1 solid black'")
     with open(html_name, 'w', encoding="utf-8") as f:
         f.write(html)
 
