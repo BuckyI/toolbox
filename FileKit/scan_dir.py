@@ -18,6 +18,39 @@ def scan_dir(top: str):
     return file_tree
 
 
+def selective_scan_dir(top: str, skip: list = None):
+    "scan top, filter by `skip`"
+
+    def recursive_scan(path: str, tree: dict):
+        depth = path.replace(tree['root'], '').count(os.sep)
+        dirnames = []
+        filenames = []
+        for entry in os.scandir(path):
+            if any(i in entry.path for i in skip_list):
+                continue
+            if entry.is_file():
+                filenames.append(entry.name)
+            elif entry.is_dir():
+                dirnames.append(entry.name)
+                recursive_scan(entry.path, tree)
+        else:
+            tree[path] = {
+                "depth": depth,
+                "dirnames": dirnames,
+                "filenames": filenames
+            }
+
+    # if path contains substring in skip_list, omit
+    skip_list = ['.git', '__pycache__', '.obsidian']
+    if skip:
+        skip_list.extend(skip)
+    # scan
+    root = os.path.abspath(top)
+    file_tree = {"root": root}
+    recursive_scan(root, file_tree)
+    return file_tree
+
+
 def compare_dir(dir1, dir2):
     file_tree1 = scan_dir(dir1)
     file_tree2 = scan_dir(dir2)
@@ -42,7 +75,7 @@ if __name__ == "__main__":
     assert os.path.exists(args.output), "output folder dosen't exist!"
 
     top = os.path.abspath(args.folder)
-    file_tree = scan_dir(top)
+    file_tree = selective_scan_dir(top)
     # pprint(file_tree)
 
     # save json
