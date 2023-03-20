@@ -76,6 +76,7 @@ class Image():
         - input set_time
         - os.stat mtime
         - os.stat ctime
+        # TODO: format 添加 时分秒
         """
         def str_time(t):
             return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t))
