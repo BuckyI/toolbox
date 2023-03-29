@@ -136,6 +136,9 @@ class NameChecker():
     def contains_Chinese(self, s):
         return any(re.search(r'[\u4e00-\u9fff]', char) for char in s)
 
+    def is_random(self, s):
+        return re.match(r"\w{20,}", s)
+
     def is_uuid(self, s):
         return re.match(r"[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}", s)
 
@@ -189,7 +192,7 @@ class NameChecker():
         if (self.contains_English(s) or self.contains_Chinese(s)
                 or self.contains_special_word(s) or self.is_digit(s)):
             return True
-        elif self.is_uuid(s):
+        elif self.is_uuid(s) or self.is_random(s):
             return False
         else:  # not matched by any rules, return tolerant
             return tolerant
