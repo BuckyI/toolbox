@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Mightymjolnir's Script
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.3
 // @description  try to take over the world!
 // @author       You
 // @match        *://*/*
@@ -15,6 +15,11 @@
 
     // 读取当前页面的标题
     var originalTitle = document.title;
+    // 如果标题为空，则一直读取
+    while (originalTitle === '') {
+        originalTitle = document.title;
+    }
+    console.log('读取到标题：', originalTitle);
 
     var loopCount = 0;
     var intervalId = setInterval(function () {
@@ -25,9 +30,9 @@
             return;
         }
         if (document.title !== originalTitle) { // 标题已经被修改
+            console.log('读取到变更标题，已恢复原标题', document.title);
             document.title = originalTitle;
             clearInterval(intervalId);
-            console.log('标题已恢复为原始标题：', originalTitle);
         }
     }, 1000); // 每隔1秒执行一次循环
 })();
