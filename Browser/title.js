@@ -16,9 +16,9 @@ function waitForTitleChange(originalTitle, timeout) {
         const observer = new MutationObserver((mutationsList, observer) => {
             for (const mutation of mutationsList) {
                 if (mutation.type === 'childList' && document.title !== originalTitle) {
+                    resolve(document.title);
                     document.title = originalTitle;
                     observer.disconnect();
-                    resolve(document.title);
                     return;
                 }
             }
