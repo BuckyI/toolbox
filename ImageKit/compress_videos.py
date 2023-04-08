@@ -31,6 +31,10 @@ def compress_video(source: Path, output: Path):
         'ffmpeg', '-i', source, '-c:v', 'libx265', '-x265-params', 'crf=25',
         '-c:a', 'copy', output
     ]
+    args = [
+        'ffmpeg', '-i', source, '-c:v', 'libx265', '-x265-params', 'crf=28',
+        '-c:a', 'copy', '-vf', 'scale=iw/1.3333:-1', output
+    ]
     result = subprocess.run(args)
 
     if result.returncode == 0:
