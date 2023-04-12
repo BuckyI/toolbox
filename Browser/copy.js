@@ -5,12 +5,10 @@
 // @description  在复制网页内容后，剪贴板内添加一行网页链接（会丢失格式）
 // @author       You
 // @match        *://*/*
-// @grant        none
+// @grant        GM_registerMenuCommand
 // ==/UserScript==
 
-(function () {
-    'use strict';
-
+function addEvent() {
     document.addEventListener('copy', function (e) {
         var selection = window.getSelection();
         if (selection.rangeCount) {
@@ -37,5 +35,16 @@
             // prevent the default copy behavior
             e.preventDefault();
         }
+    });
+}
+
+
+(function () {
+    'use strict';
+    // addEvent();
+    // 注册快捷键并关联回调函数
+    GM_registerMenuCommand("复制添加网页链接", function () {
+        addEvent();
+        alert('现在开始，复制文字都会添加网页链接！');
     });
 })();
