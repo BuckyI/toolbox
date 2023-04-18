@@ -1,6 +1,7 @@
 import subprocess
 from pathlib import Path
 import logging
+from logs import add_file_handler
 """using ffmpeg compress all the video files in the given folder"""
 
 
@@ -56,23 +57,10 @@ def batch_compress_videos(source: str, match="*.mp4"):
         compress_video(video, dest / video.name)
 
 
-def add_handler():
-    name = "video_compression"
-    if name in [h.name for h in logging.root.handlers]:
-        return  # 已经存在了就不重复添加
-    handler = logging.FileHandler("video_compression.log")
-    handler.set_name(name)
-    handler.setLevel(logging.INFO)
-    handler.setFormatter(logging.Formatter('%(asctime)s : %(message)s'))
-    logging.root.addHandler(handler)  # add handler to root logger
-    logging.debug("add log handler '%s' to '%s'", handler.name,
-                  logging.root.name)
-
-
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s: %(message)s')
-    add_handler()
+    add_file_handler('video_compression', 'video_compression.log')
 
     source = r'D:\Desktop\小米相册\屏幕录制\input'
     batch_compress_videos(source)

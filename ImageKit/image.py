@@ -7,6 +7,7 @@ import re
 import uuid
 from win32_setctime import setctime
 import enchant
+from logs import add_file_handler
 
 
 class File():
@@ -236,35 +237,23 @@ class Image(File):
         self.image_type = imghdr.what(path)
 
 
-def add_handler():
-    "部分图片处理 log 输出到本地文件"
-
-    def match(s):
-        msg = s.msg
-        mode = ["[RENAME]", "[cTime change]"]
-        for m in mode:
-            if m in msg:
-                return True
-        else:
-            return False
-
-    name = "Image Info to File Log"
-    if name in [h.name for h in logging.root.handlers]:
-        return  # 已经存在了就不重复添加
-    handler = logging.FileHandler("images_change.log")
-    handler.set_name(name)
-    handler.setLevel(logging.INFO)
-    handler.addFilter(match)
-    handler.setFormatter(logging.Formatter('%(asctime)s : %(message)s'))
-    logging.root.addHandler(handler)  # add handler to root logger
-    logging.debug("add log handler '%s' to '%s'", handler.name,
-                  logging.root.name)
+def match_log_pattern(s):
+    # 有些日志输出到本地文件存储
+    msg = s.msg
+    mode = ["[RENAME]", "[cTime change]"]
+    for m in mode:
+        if m in msg:
+            return True
+    else:
+        return False
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s: %(message)s')
-    add_handler()
+    # 部分图片处理 log 输出到本地文件
+    add_file_handler("Image Info to File Log", "images_change.log",
+                     match_log_pattern)
     source = r"imageKit/test/"
     # 转换成绝对路径，避免混淆（？）后续 f.path 也会变成绝对路径
     source = os.path.realpath(source)

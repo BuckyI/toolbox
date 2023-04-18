@@ -4,9 +4,10 @@ from tkinter.messagebox import askokcancel, showinfo
 import windnd
 import uuid
 import logging
-from image import Image, scan_image, scan_file, add_handler
+from image import Image, scan_image, scan_file, match_log_pattern
 from pathlib import Path
 import enum
+from logs import add_file_handler
 
 
 class TagMode(enum.Enum):
@@ -98,5 +99,5 @@ class Window(object):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s: %(message)s')
-    add_handler()
+    add_file_handler('file_rename', 'file_rename.log', match_log_pattern)
     w = Window()
