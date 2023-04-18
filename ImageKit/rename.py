@@ -4,7 +4,7 @@ from tkinter.messagebox import askokcancel, showinfo
 import windnd
 import uuid
 import logging
-from image import Image, scan_image, add_handler
+from image import Image, scan_image, scan_file, add_handler
 from pathlib import Path
 import enum
 
@@ -24,9 +24,9 @@ class Window(object):
 
     def create_window(self):
         self.root = tk.Tk()
-        self.root.title('图片归档')
+        self.root.title('文件归档')
 
-        # 设定图片标签
+        # 设定标签
         frm_tag = tk.LabelFrame(self.root, text="设定标签")
         frm_tag.pack()
         self.tagmode = tk.StringVar()  # 存储当前选项
@@ -43,58 +43,56 @@ class Window(object):
         self.tag.pack(side=tk.RIGHT)
 
         # 拖动文件触发重命名
-        windnd.hook_dropfiles(self.root, func=self.rename_selected_images)
+        windnd.hook_dropfiles(self.root, func=self.rename_selected_files)
 
-    def rename_selected_images(self, urls):
+    def rename_selected_files(self, urls):
         paths = [Path(url.decode('gbk')) for url in urls]
 
         # load images
-        images = []
+        files = []
         for p in paths:
             if not p.exists():  # 路径中存在特殊字符时会读取失败
                 logging.error("load failed due to encoding error): %s", p)
                 showinfo(message=f"load failed due to encoding error): {p}")
                 continue
-            images.extend(scan_image(p.absolute()))
+            files.extend(scan_file(p.absolute()))
 
         # load tags
         mode = TagMode(self.tagmode.get())
         if mode == TagMode.NoTags:
             tags = []
-            for img in images:
-                img.set_tags(tags, reset=True)
+            for f in files:
+                f.set_tags(tags, reset=True)
         elif mode == TagMode.CustomTags:
             tags = self.tag.get().split()
-            for img in images:
-                img.set_tags(tags, reset=True)
+            for f in files:
+                f.set_tags(tags, reset=True)
         elif mode == TagMode.FileNameTags:
-            for img in images:
-                tags = img.path.stem.split()
-                img.set_tags(tags, reset=True)
+            for f in files:
+                tags = f.path.stem.split()
+                f.set_tags(tags, reset=True)
         elif mode == TagMode.DefaultTags:
-            # default behavior of Image
+            # default behavior
             pass
 
         # sort images to avoid name conflict
-        sorted_images = {}
-        for img in images:  # 根据期望路径为图片归类
-            path = img.ideal_path
-            img_ls = sorted_images.setdefault(path, [])
-            img_ls.append(img)
-        for path in sorted_images:
-            img_ls = sorted_images[path]
-            if len(img_ls) == 1:
-                img_ls[0].rename()
-            else:
-                # 存在多个同名文件，按照时间从小到大排序添加序号
-                img_ls.sort(
+        sorted_files = {}
+        # 所有文件根据期望路径 ideal_path 归类
+        for f in files:
+            sorted_files.setdefault(f.ideal_path, []).append(f)
+        for fs in sorted_files.values():
+            # 若存在多个同名文件，按照时间从小到大排序添加序号
+            if len(fs) > 1:
+                fs.sort(
                     key=lambda img: img.time,
                     reverse=False,
                 )
-                for index, img in enumerate(img_ls):
-                    img.index = index + 1  # 序号从 1 开始
-                    img.rename()
-        showinfo(message="Image rename completed")
+                for index, f in enumerate(fs):
+                    f.index = index + 1  # 序号从 1 开始
+            # 重命名
+            for f in fs:
+                f.rename()
+        showinfo(message="Rename completed")
 
 
 if __name__ == "__main__":

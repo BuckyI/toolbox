@@ -118,6 +118,19 @@ def scan_image(path: str, recursive=False):
     return "scan complete"
 
 
+def scan_file(path: str, recursive=False):
+    """scan all image files in path (recursicely)"""
+    if os.path.isfile(path):
+        yield File(path)
+    elif os.path.isdir(path):
+        for f in os.scandir(path):
+            if f.is_file():
+                yield File(f.path)
+            elif recursive and f.is_dir():
+                yield from scan_file(f.path, recursive)
+    return "scan complete"
+
+
 class NameChecker():
     "从名称中提取信息"
     special_word = ["jike"]
