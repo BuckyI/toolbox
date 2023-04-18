@@ -4,7 +4,7 @@ from tkinter.messagebox import askokcancel, showinfo
 import windnd
 import uuid
 import logging
-from image import Image, scan, add_handler
+from image import Image, scan_image, add_handler
 from pathlib import Path
 import enum
 
@@ -55,7 +55,7 @@ class Window(object):
                 logging.error("load failed due to encoding error): %s", p)
                 showinfo(message=f"load failed due to encoding error): {p}")
                 continue
-            images.extend(scan(p.absolute()))
+            images.extend(scan_image(p.absolute()))
 
         # load tags
         mode = TagMode(self.tagmode.get())

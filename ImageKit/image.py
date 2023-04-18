@@ -9,7 +9,7 @@ from win32_setctime import setctime
 import enchant
 
 
-class Image():
+class File():
     def __init__(self, path: str):
         self.path = Path(path)
         self.tags = []
@@ -105,7 +105,7 @@ class Image():
                          str_time(times[i]))
 
 
-def scan(path: str, recursive=False):
+def scan_image(path: str, recursive=False):
     """scan all image files in path (recursicely)"""
     if os.path.isfile(path) and imghdr.what(path):
         yield Image(path)
@@ -114,7 +114,7 @@ def scan(path: str, recursive=False):
             if f.is_file() and imghdr.what(f.path):
                 yield Image(f.path)
             elif recursive and f.is_dir():
-                yield from scan(f.path, recursive)
+                yield from scan_image(f.path, recursive)
     return "scan complete"
 
 
@@ -214,6 +214,13 @@ class NameChecker():
             if len(result) > 0 and result[-1].isdigit():
                 result.pop()
             return result
+
+
+class Image(File):
+    def __init__(self, path: str):
+        super().__init__(path)
+        # 判断是否为图片
+        self.image_type = imghdr.what(path)
 
 
 def add_handler():
