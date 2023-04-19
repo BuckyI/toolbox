@@ -9,6 +9,10 @@
 // ==/UserScript==
 
 function processClipboard(e) {
+    /** 
+     * Processes the clipboard event and copies the selected text and source link to the clipboard
+     * @param {object} e - The clipboard event object 
+     */
     var selection = window.getSelection();
     if (selection.rangeCount) {
         // create a new div element to contain the selected text and link
@@ -37,6 +41,9 @@ function processClipboard(e) {
 }
 
 function modifyTitle() {
+    /**
+     * Modify the title of the document by removing specific patterns from it.
+     */
     var title = document.title;
     var regexList = [
         /^\(\d+ 封私信 \/ \d+ 条消息\)/,
