@@ -219,6 +219,7 @@ class NameChecker():
             (r'Screenshot_(20\d{6})_(\d{6})', r'\1\2'),  # 截图
             (r'Screenshot_(20\d{2})_(\d{4})_(\d{6})', r'\1\2\3'),  # 截图
             (r'\((\d+)\)', r'\1'),  # 编号
+            (r'QQ图片(20\d{12})', r'\1'),  # QQ图片
         ]
         for i, j in sub_patterns:
             s = re.sub(i, j, s)
