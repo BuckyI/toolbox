@@ -151,7 +151,7 @@ class NameChecker():
         return any(re.search(r'[\u4e00-\u9fff]', char) for char in s)
 
     def is_random(self, s):
-        return re.match(r"\w{20,}", s)
+        return re.match(r"[a-zA-Z0-9]{20,}", s)
 
     def is_uuid(self, s):
         return re.match(r"[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}", s)
