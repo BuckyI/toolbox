@@ -211,17 +211,27 @@ class NameChecker():
         else:  # not matched by any rules, return tolerant
             return tolerant
 
-    def clean_prefix(self, s):
-        return re.match(r"#?(.*)", s).group(1)
+    def filter(self, s):
+        sub_patterns = [
+            (r"#(.*)", r"\1"),  # 去除开头的井字标记
+            (r"jike_\d{13}_pic", r"jike"),  # 来自即刻软件的图片
+            (r'IMG_(20\d{6})_(\d{6})', r'\1\2'),  # 来自手机的图片
+            (r'Screenshot_(20\d{6})_(\d{6})', r'\1\2'),  # 截图
+            (r'Screenshot_(20\d{2})_(\d{4})_(\d{6})', r'\1\2\3'),  # 截图
+            (r'\((\d+)\)', r'\1'),  # 编号
+        ]
+        for i, j in sub_patterns:
+            s = re.sub(i, j, s)
+        return s
 
     def get_tags(self):
         result = []
         for tag in self.tags:
+            tag = self.filter(tag)  # simplify some common tags
             if not self.date and self.get_date(tag):
                 # if not have date, then get date, if success, continue
                 continue
             if self.name_sensible(tag):
-                tag = self.clean_prefix(tag)
                 result.append(tag)
         else:
             # 最后一个标签是数字时（一般是为避免重名标的序号或无意义）可舍弃
