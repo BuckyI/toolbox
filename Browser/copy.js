@@ -36,9 +36,19 @@ function processClipboard(e) {
     }
 }
 
+function modifyTitle() {
+    var title = document.title;
+    var regex = /^\(\d+ 封私信 \/ \d+ 条消息\)/;
+    var newTitle = title.replace(regex, "");
+    console.log('from: ', title, ' to: ', newTitle);
+    document.title = newTitle;
+}
 
 (function () {
     'use strict';
+
+    setTimeout(modifyTitle, 10000);
+
     // 注册快捷键并关联回调函数
     GM_registerMenuCommand("复制添加网页链接", function () {
         document.addEventListener('copy', processClipboard);
