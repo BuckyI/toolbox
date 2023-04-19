@@ -38,10 +38,17 @@ function processClipboard(e) {
 
 function modifyTitle() {
     var title = document.title;
-    var regex = /^\(\d+ 封私信 \/ \d+ 条消息\)/;
-    var newTitle = title.replace(regex, "");
-    console.log('from: ', title, ' to: ', newTitle);
-    document.title = newTitle;
+    var regexList = [
+        /^\(\d+ 封私信 \/ \d+ 条消息\)/,
+        /_.*/,
+    ];
+
+    for (var i = 0; i < regexList.length; i++) {
+        var regex = regexList[i];
+        title = title.replace(regex, "");
+    }
+
+    document.title = title;
 }
 
 (function () {
