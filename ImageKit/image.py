@@ -181,17 +181,20 @@ class NameChecker():
         return True
 
     def get_date(self, s):
-        pattern = r'(20\d{6})(\d{6})?'
-        match = re.match(pattern, s)
-        if match is None:
-            return False  # not a date
-        format = "%Y%m%d%H%M%S" if match.group(2) else "%Y%m%d"
-        try:
-            st_time = time.strptime(s, format)
-            self.date = time.strftime("%Y%m%d", st_time)
-            return True
-        except ValueError:
-            return False
+        patterns = [
+            (r'(20\d{6})', "%Y%m%d"),  # YYYYMMDD
+            (r'(20\d{6})(\d{6})', "%Y%m%d%H%M%S"),  # YYYYMMDDHHMMSS
+        ]
+        for s_pattern, date_pattern in patterns:
+            if re.match(s_pattern, s):
+                try:
+                    st_time = time.strptime(s, date_pattern)
+                    self.date = time.strftime("%Y%m%d", st_time)
+                    return self.date
+                except ValueError:
+                    continue
+        else:
+            return ""  # not a date
 
     def contains_special_word(self, s):
         "some name has special meanings, like 'jike' means an app"
