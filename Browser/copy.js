@@ -45,16 +45,17 @@ function modifyTitle() {
      * Modify the title of the document by removing specific patterns from it.
      */
     var title = document.title;
-    var regexList = [
-        /^\(\d+ 封私信 \/ \d+ 条消息\)/,
-        /_.*/,
+    const regexes = [
+        [/^\(\d+ 封私信 \/ \d+ 条消息\)/, ''],
+        [/_哔哩哔哩_bilibili/, ' - 哔哩哔哩'],
+        [/_.*$/, '']
     ];
 
-    for (var i = 0; i < regexList.length; i++) {
-        var regex = regexList[i];
-        title = title.replace(regex, "");
+    for (const [match, target] of regexes) {
+        title = title.replace(match, target);
     }
 
+    console.log("title modified:\nfrom:", document.title, "\nto:", title);
     document.title = title;
 }
 
