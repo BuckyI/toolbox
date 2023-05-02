@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         Copy
+// @name         mjolnir
 // @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  在复制网页内容后，剪贴板内添加一行网页链接（会丢失格式）
-// @author       You
+// @version      1.0
+// @description  useful tools for browser
+// @author       Thor
 // @match        *://*/*
 // @grant        GM_registerMenuCommand
 // ==/UserScript==
