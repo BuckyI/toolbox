@@ -47,6 +47,7 @@ function modifyTitle() {
     var title = document.title;
     const regexes = [
         [/^\(\d+ 封私信 \/ \d+ 条消息\)/, ''],
+        [/^\(\d+ 封私信\)/, ''],
         [/_哔哩哔哩_bilibili/, ' - 哔哩哔哩'],
         [/_.*$/, '']
     ];
