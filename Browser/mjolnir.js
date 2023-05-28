@@ -57,14 +57,24 @@ function modifyTitle() {
         title = title.replace(match, target);
     }
 
-    console.log("title modified:\nfrom:", document.title, "\nto:", title);
-    document.title = title;
+    var isChanged = document.title !== title;
+    if (isChanged) {
+        console.log("title modified:\nfrom:", document.title, "\nto:", title);
+        document.title = title;
+    }
+    return isChanged;
 }
 
 (function () {
     'use strict';
+    let intervalId = setInterval(() => {
+        const isChanged = modifyTitle();
+        if (isChanged) { // 匹配之后，停止间隔定时器
+            clearInterval(intervalId);
+        }
+    }, 1000);
+    setTimeout(() => clearInterval(intervalId), 10000);
 
-    setTimeout(modifyTitle, 10000);
 
     // 注册快捷键并关联回调函数
     GM_registerMenuCommand("复制添加网页链接", function () {
