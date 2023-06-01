@@ -65,6 +65,19 @@ function modifyTitle() {
     return isChanged;
 }
 
+
+function blockKeyboardShortcuts(event) {
+    /**
+     * Block keyboard shortcuts.
+     */
+
+    // 如果用户按下了 Ctrl + S 或 Command + S （Mac OS 快捷键），则阻止浏览器默认行为
+    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        event.preventDefault();
+    }
+}
+
+
 (function () {
     'use strict';
     let intervalId = setInterval(() => {
@@ -81,8 +94,14 @@ function modifyTitle() {
         document.addEventListener('copy', processClipboard);
         alert('现在开始，复制文字都会添加网页链接！');
     });
+    GM_registerMenuCommand("屏蔽快捷键", function () {
+        document.addEventListener('keydown', blockKeyboardShortcuts);
+        alert('屏蔽 ctrl+s!');
+    });
+
     GM_registerMenuCommand("停用", function () {
         document.removeEventListener('copy', processClipboard);
+        document.removeEventListener('keydown', blockKeyboardShortcuts);
         alert('已停用 EventListener ');
     });
 })();
