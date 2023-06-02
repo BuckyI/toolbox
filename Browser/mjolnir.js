@@ -9,9 +9,9 @@
 // ==/UserScript==
 
 function processClipboard(e) {
-    /** 
+    /**
      * Processes the clipboard event and copies the selected text and source link to the clipboard
-     * @param {object} e - The clipboard event object 
+     * @param {object} e - The clipboard event object
      */
     var selection = window.getSelection();
     if (selection.rangeCount) {
@@ -70,11 +70,16 @@ function blockKeyboardShortcuts(event) {
     /**
      * Block keyboard shortcuts.
      */
-
-    // 如果用户按下了 Ctrl + S 或 Command + S （Mac OS 快捷键），则阻止浏览器默认行为
-    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-        event.preventDefault();
+    const websites = ['app.capacities.io', 'v.flomoapp.com'];
+    var current = window.location.hostname;
+    if (websites.includes(current)) {
+        console.log(`${current} 在匹配列表中，将禁用部分快捷键`);
+        // 如果用户按下了 Ctrl + S 或 Command + S （Mac OS 快捷键），则阻止浏览器默认行为
+        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            event.preventDefault();
+        }
     }
+
 }
 
 
@@ -89,19 +94,24 @@ function blockKeyboardShortcuts(event) {
     setTimeout(() => clearInterval(intervalId), 10000);
 
 
+    // 默认启用功能
+    document.addEventListener('keydown', blockKeyboardShortcuts);
     // 注册快捷键并关联回调函数
     GM_registerMenuCommand("复制添加网页链接", function () {
         document.addEventListener('copy', processClipboard);
         alert('现在开始，复制文字都会添加网页链接！');
     });
-    GM_registerMenuCommand("屏蔽快捷键", function () {
+    GM_registerMenuCommand("屏蔽快捷键[默认开启]", function () {
         document.addEventListener('keydown', blockKeyboardShortcuts);
         alert('屏蔽 ctrl+s!');
     });
-
+    // 禁用功能
     GM_registerMenuCommand("停用", function () {
         document.removeEventListener('copy', processClipboard);
         document.removeEventListener('keydown', blockKeyboardShortcuts);
         alert('已停用 EventListener ');
     });
+
+    console.log(window.window.location.hostname);
+    console.log(window.window.location.href);
 })();
