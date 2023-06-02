@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         mjolnir
 // @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  useful tools for browser
+// @version      2.0
+// @description  useful tools for browser, https://github.com/BuckyI/toolbox
 // @author       Thor
 // @match        *://*/*
 // @grant        GM_registerMenuCommand
