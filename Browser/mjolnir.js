@@ -86,12 +86,7 @@ function blockKeyboardShortcuts(event) {
 
 (function () {
     'use strict';
-    let intervalId = setInterval(() => {
-        const isChanged = modifyTitle();
-        if (isChanged) { // 匹配之后，停止间隔定时器
-            clearInterval(intervalId);
-        }
-    }, 1000);
+    let intervalId = setInterval(modifyTitle, 1000);
     setTimeout(() => clearInterval(intervalId), 10000);
 
 
