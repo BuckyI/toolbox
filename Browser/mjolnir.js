@@ -51,7 +51,7 @@ function modifyTitle() {
         [/^\(\d+\)/, ''],
         [/-腾讯云开发者社区 - 腾讯云开发者社区/, ''],
         [/_哔哩哔哩_bilibili/, ' - 哔哩哔哩'],
-        [/_.*$/, '']
+        [/_[^\W]+$/, '']
     ];
 
     for (const [match, target] of regexes) {
