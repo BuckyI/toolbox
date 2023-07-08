@@ -1,0 +1,8 @@
+json2html
+pyenchant
+pyperclip
+PyQt5
+pytube
+ruamel.base
+win32_setctime
+windnd
