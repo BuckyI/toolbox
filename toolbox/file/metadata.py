@@ -1,21 +1,29 @@
 """
-copy metadata of pictures from `scr` to `dest`
+metadata related file operation
 """
 import os
-
-# from shutil import copy2
-from win32file import CreateFile, SetFileTime, GetFileTime, CloseHandle
-from win32file import GENERIC_READ, GENERIC_WRITE, OPEN_EXISTING
-from pywintypes import Time
-
+import platform
 import warnings
+from shutil import copy2
 
 
 def copy_metadata(scr, dest):
     warnings.warn(
-        "`copy_metadata` is deprecated, because I dont think we should mess up create time",
+        "`copy_metadata` is deprecated, because I dont think we should mess up the create time",
         DeprecationWarning,
     )
+    assert platform.system() == "Windows"
+    from pywintypes import Time
+    from win32file import (
+        GENERIC_READ,
+        GENERIC_WRITE,
+        OPEN_EXISTING,
+        CloseHandle,
+        CreateFile,
+        GetFileTime,
+        SetFileTime,
+    )
+
     # link images in scr and dest that have same name
     scr_files = [f for f in os.scandir(scr) if f.is_file()]
     scr_filenames = [f.name for f in scr_files]
