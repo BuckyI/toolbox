@@ -4,7 +4,12 @@ metadata related file operation
 import os
 import platform
 import warnings
-from shutil import copy2
+from shutil import copy2, copystat
+
+
+def copy_status(src: str, dst: str):
+    assert os.path.exists(src) and os.path.exists(dst)
+    copystat(src, dst, follow_symlinks=False)
 
 
 def copy_metadata(scr, dest):
