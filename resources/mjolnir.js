@@ -106,7 +106,4 @@ function notification(text, title = 'Notification') {
         document.removeEventListener('keydown', blockKeyboardShortcuts);
         notification("已停用所有的 EventListener");
     });
-
-    console.log(window.window.location.hostname);
-    console.log(window.window.location.href);
 })();
