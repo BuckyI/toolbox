@@ -6,6 +6,7 @@
 // @author       Thor
 // @match        *://*/*
 // @grant        GM_registerMenuCommand
+// @grant        GM_notification
 // ==/UserScript==
 
 function processClipboard(e) {
@@ -84,6 +85,15 @@ function blockKeyboardShortcuts(event) {
 
 }
 
+function notification(text, title = 'Notification') {
+    GM_notification({
+        text: text,
+        title: title,
+        timeout: 1000,
+        silent: true
+    });
+}
+
 
 (function () {
     'use strict';
@@ -96,17 +106,17 @@ function blockKeyboardShortcuts(event) {
     // 注册快捷键并关联回调函数
     GM_registerMenuCommand("复制添加网页链接", function () {
         document.addEventListener('copy', processClipboard);
-        alert('现在开始，复制文字都会添加网页链接！');
+        notification('现在开始，复制文字都会添加网页链接！');
     });
     GM_registerMenuCommand("屏蔽快捷键[默认开启]", function () {
         document.addEventListener('keydown', blockKeyboardShortcuts);
-        alert('屏蔽 ctrl+s!');
+        notification('屏蔽 ctrl+s!');
     });
     // 禁用功能
     GM_registerMenuCommand("停用", function () {
         document.removeEventListener('copy', processClipboard);
         document.removeEventListener('keydown', blockKeyboardShortcuts);
-        alert('已停用 EventListener ');
+        notification("已停用所有的 EventListener");
     });
 
     console.log(window.window.location.hostname);
