@@ -37,6 +37,7 @@ function modifyTitle() {
     const regexes = [
         [/^\(\d+ 封私信 \/ \d+ 条消息\)/, ''],
         [/^\(\d+ 封私信\)/, ''],
+        [/^\(\d+ 条消息\)/, ''],
         [/^\(\d+\)/, ''],
         [/-腾讯云开发者社区 - 腾讯云开发者社区/, ''],
         [/_哔哩哔哩_bilibili/, ' - 哔哩哔哩'],
@@ -106,4 +107,7 @@ function notification(text, title = 'Notification') {
         document.removeEventListener('keydown', blockKeyboardShortcuts);
         notification("已停用所有的 EventListener");
     });
+
+    console.log(window.window.location.hostname);
+    console.log(window.window.location.href);
 })();
