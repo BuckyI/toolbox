@@ -14,33 +14,21 @@ function processClipboard(e) {
      * Processes the clipboard event and copies the selected text and source link to the clipboard
      * @param {object} e - The clipboard event object
      */
-    var selection = window.getSelection();
+    const selection = window.getSelection();
     if (selection.rangeCount) {
-        // create a new div element to contain the selected text and link
-        var container = document.createElement('div');
+        const container = document.createElement('div');
+        const range = selection.getRangeAt(0);
 
-        // get the selected range and clone it
-        var range = selection.getRangeAt(0);
-        var clonedRange = range.cloneRange();
-
-        // wrap the cloned range in the new container div
-        container.appendChild(clonedRange.cloneContents());
-
-        // add the source link to the end of the copied text
-        var pagelink = '<br/>-- [' + document.title + '](' + document.location.href + ')';
+        container.appendChild(range.cloneContents());
+        const pagelink = `<br/>-- [${document.title}](${document.location.href})`;
         container.innerHTML += pagelink;
 
-        // serialize the HTML contents of the container div
-        var serializedHtml = (new XMLSerializer()).serializeToString(container);
-
-        // set the serialized HTML as the data to be copied to the clipboard
-        e.clipboardData.setData('text/html', serializedHtml);
-
-        // prevent the default copy behavior
+        e.clipboardData.setData('text/html', container.outerHTML);
         e.preventDefault();
+
+        console.log("copy:", container.outerHTML);
     }
 }
-
 function modifyTitle() {
     /**
      * Modify the title of the document by removing specific patterns from it.
