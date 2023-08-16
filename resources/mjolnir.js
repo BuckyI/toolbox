@@ -41,6 +41,7 @@ function modifyTitle() {
         [/^\(\d+\)/, ''],
         [/-腾讯云开发者社区 - 腾讯云开发者社区/, ''],
         [/_哔哩哔哩_bilibili/, ' - 哔哩哔哩'],
+        [/-哔哩哔哩_Bilibili/, ' - 哔哩哔哩'],
         [/(_.*?){1,2}-CSDN博客$/, ' - CSDN'],
     ];
 
@@ -72,6 +73,7 @@ function blockKeyboardShortcuts(event) {
     }
 
 }
+
 
 function notification(text, title = 'Notification') {
     GM_notification({
